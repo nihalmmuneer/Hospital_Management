@@ -1,6 +1,7 @@
 import React from "react";
 import { useDoctorContext } from "../../../../context/DoctorContext.js";
 import Link from "next/link.js";
+import Image from "next/image.js";
 
 const DoctorSuggestionList = () => {
   const { categories } = useDoctorContext();
