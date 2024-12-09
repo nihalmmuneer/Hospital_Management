@@ -6,35 +6,46 @@ import DoctorList from "@/app/_components/DoctorList";
 const Search = ({ params }) => {
   const { categories } = useDoctorContext();
   const [filteredDoctors, setFilteredDoctors] = useState([]);
-
-  const { cname } = React.use(params);
-  const decodedCategoryName = decodeURIComponent(cname); 
+  
+  // Unwrap params using React.use()
+  const { cname } = React.use(params); // Access params using React.use()
+  console.log(decodeURIComponent(cname), "cname")
 
   useEffect(() => {
     filteredDoctorsByCategory();
-  }, [categories, cname]); 
+  }, [categories, cname]);
 
   const filteredDoctorsByCategory = () => {
-    const doctorDetails = categories.find(
-      (category) =>
-        category.Name.toLowerCase() === decodedCategoryName.toLowerCase()
-    );
-    if (doctorDetails) {
-      setFilteredDoctors(doctorDetails?.doctors);
-    } else {
+    if (cname === "") {
+      // If cname is an empty string, get all doctors
       const allDoctors = categories.reduce((acc, category) => {
         return [...acc, ...category.doctors];
       }, []);
       setFilteredDoctors(allDoctors);
+    } else {
+      // Otherwise, filter by category
+      const decodedCategoryName = decodeURIComponent(cname);
+      const doctorDetails = categories.find(
+        (category) =>
+          category.Name.toLowerCase() === decodedCategoryName.toLowerCase()
+      );
+
+      if (doctorDetails) {
+        setFilteredDoctors(doctorDetails?.doctors);
+      } else {
+        const allDoctors = categories.reduce((acc, category) => {
+          return [...acc, ...category.doctors];
+        }, []);
+        setFilteredDoctors(allDoctors);
+      }
     }
   };
-
 
   return (
     <div>
       <DoctorList
         doctors={filteredDoctors}
-        heading={decodeURIComponent(cname)}
+        heading={decodeURIComponent(cname) !== "" ? decodeURIComponent(cname) : undefined} // Only set heading if cname is not empty
       />
     </div>
   );

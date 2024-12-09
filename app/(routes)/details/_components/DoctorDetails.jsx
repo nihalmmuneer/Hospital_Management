@@ -1,9 +1,15 @@
 import { GraduationCap, MapPin } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+
 import BookAppointment from "./BookAppointment";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Button } from "@/components/ui/button";
 
 const DoctorDetails = ({ doctor }) => {
+  const { user } = useKindeBrowserClient();
+
   const socialMedia = [
     {
       id: 1,
@@ -60,7 +66,7 @@ const DoctorDetails = ({ doctor }) => {
             {doctor?.specialization}
           </h2>
           <div className="flex gap-4 mt-1">
-            {socialMedia?.map((media,index) => (
+            {socialMedia?.map((media, index) => (
               <div key={index}>
                 <Image
                   src={media?.icon}
@@ -72,8 +78,13 @@ const DoctorDetails = ({ doctor }) => {
               </div>
             ))}
           </div>
-
-          <BookAppointment doctor={doctor} />
+          {user ? (
+            <BookAppointment doctor={doctor} />
+          ) : (
+            <LoginLink>
+              <Button>Book Appointment</Button>
+            </LoginLink>
+          )}
           <div className="p-1">
             <span className="text-gray-600 text-sm tracking-wide list-inside">
               {doctor && doctor?.about}

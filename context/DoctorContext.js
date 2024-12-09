@@ -1,6 +1,6 @@
-// context/DoctorContext.js
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid'; // Importing uuid to generate unique IDs
 
 // Create the context for doctors
 const DoctorContext = createContext();
@@ -194,22 +194,45 @@ export const DoctorProvider = ({ children }) => {
     },
     // Include the other categories here...
   ]);
+
   const [appointments, setAppointments] = useState([]);
+
   const addAppointment = (appointment) => {
-    if(!appointment){
-        return false;
+    if (!appointment) {
+      return false;
     }
-    setAppointments((prev) => [...prev, appointment]);
-    return true
+    // Add a unique id to the appointment
+    const newAppointment = { ...appointment, id: uuidv4() };
+    setAppointments((prev) => {
+      const updatedAppointments = [...prev, newAppointment];
+      localStorage.setItem("appointments", JSON.stringify(updatedAppointments));
+      return updatedAppointments;
+    });
+
+    return true;
   };
+
+  useEffect(() => {
+    const storedAppointments =
+      JSON.parse(localStorage.getItem("appointments")) || [];
+    setAppointments(storedAppointments);
+  }, []);
 
   const getAppointments = (userEmail) => {
     if (!userEmail) {
       throw new Error("User Email is required to Fetch Appointments");
     }
     return appointments.filter(
-      (appointment) => appointment?.email === userEmail
+      (appointment) => appointment?.Email === userEmail
     );
+  };
+
+  const removeAppointment = (id) => {
+    setAppointments((prev) => {
+      const updatedAppointments = prev.filter((appointment) => appointment.id !== id);
+      localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+      return updatedAppointments;
+    });
   };
 
   // Return the provider with the value you want to share across your app
@@ -221,6 +244,7 @@ export const DoctorProvider = ({ children }) => {
         appointments,
         addAppointment,
         getAppointments,
+        removeAppointment
       }}
     >
       {children}

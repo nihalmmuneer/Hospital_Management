@@ -18,17 +18,16 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useDoctorContext } from "@/context/DoctorContext";
 
 const BookAppointment = ({ doctor }) => {
-  const [date, setDate] = useState();
-  const [timeSlot, setTimeSlot] = useState();
+  const [date, setDate] = useState(new Date()); // Automatically set today's date
+  const [timeSlot, setTimeSlot] = useState([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState();
   const [note, setNote] = useState("");
   const user = useKindeBrowserClient();
-
-  const { addAppointment, appointments } = useDoctorContext();
+  const { addAppointment } = useDoctorContext();
 
   useEffect(() => {
     getTime();
-  }, []);
+  }, [date]); // Update time slots when the date changes
 
   const getTime = () => {
     const timeList = [];
@@ -45,7 +44,20 @@ const BookAppointment = ({ doctor }) => {
 
   const pastDay = (day) => day <= new Date();
 
+  const handleDateSelect = (selectedDate) => {
+    setDate(selectedDate);
+  };
+
   const saveAppointment = () => {
+    const selectedDate = new Date(date); // Get the selected date
+    const today = new Date(); // Get today's date
+
+    // Prevent submission if today's date is selected
+    if (selectedDate.toDateString() === today.toDateString()) {
+      toast.error("No appointments available for today.");
+      return;
+    }
+
     const newAppointment = {
       UserName: `${user?.user?.given_name} ${user?.user?.family_name}`,
       Email: user?.user?.email,
@@ -53,6 +65,7 @@ const BookAppointment = ({ doctor }) => {
       Time: selectedTimeSlot,
       Note: note,
       doctor: doctor?.name,
+      id: user?.user?.id,
     };
 
     const isSaved = addAppointment(newAppointment);
@@ -85,7 +98,7 @@ const BookAppointment = ({ doctor }) => {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={handleDateSelect}
                 className="rounded-md border max-w-fit"
                 disabled={pastDay}
               />
@@ -96,8 +109,12 @@ const BookAppointment = ({ doctor }) => {
                 <Clock className="w-5 h-5" />
                 <span>Select Time Slot</span>
               </h2>
-              <div className="grid grid-cols-3 gap-2 border p-2 rounded-xl">
-                {timeSlot &&
+              <div className="grid grid-cols-3 gap-2 border p-2 rounded-xl h-[92%] items-center justify-center">
+                {date.toDateString() === new Date().toDateString() ? (
+                  <div className="text-red-500 flex justify-center items-center col-span-3">
+                    No slots available today.
+                  </div>
+                ) : (
                   timeSlot.map((slot, index) => (
                     <div
                       key={index}
@@ -107,11 +124,12 @@ const BookAppointment = ({ doctor }) => {
                           ? "bg-primary text-white"
                           : "text-slate-700"
                       }
-                      border cursor-pointer hover:bg-primary hover:text-white p-2 text-sm text-center rounded-lg`}
+        border cursor-pointer hover:bg-primary hover:text-white p-2 text-sm text-center rounded-lg`}
                     >
                       {slot.time}
                     </div>
-                  ))}
+                  ))
+                )}
               </div>
             </div>
           </div>

@@ -2,12 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const DoctorList = ({ doctors, heading = "Popular Doctors" }) => {
+const DoctorList = ({ doctors, heading }) => {
   return (
     <div className="mb-10">
-      <h2 className="text-2xl font-bold mb-2  p-5">
-        {decodeURIComponent(heading).replace(/[\s_%20-]+/g, " ")}
-      </h2>
+      {heading && ( // Only render the heading if it exists
+        <h2 className="text-2xl font-bold mb-2 p-5">
+          {decodeURIComponent(heading).replace(/[\s_%20-]+/g, " ")}
+        </h2>
+      )}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-2">
         {doctors?.length > 0
           ? doctors.map(
@@ -25,7 +27,6 @@ const DoctorList = ({ doctors, heading = "Popular Doctors" }) => {
                       className="h-[260px] w-full object-cover rounded-lg"
                     />
                     <div className="mt-2 flex items-baseline flex-col gap-1">
-                      {/* Render specialization as a badge */}
                       {doctor.specialization && (
                         <h2 className="font-bold text-xs bg-blue-100 text-primary rounded-full p-2">
                           {doctor.specialization}

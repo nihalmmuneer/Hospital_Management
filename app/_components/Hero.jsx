@@ -3,6 +3,14 @@ import Image from "next/image";
 import React from "react";
 
 const Hero = () => {
+  const handleExploreClick = (event) => {
+    event.preventDefault(); // Prevent any default behavior
+    const doctorListSection = document.getElementById("doctor-list");
+    if (doctorListSection) {
+      doctorListSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div>
       <section>
@@ -31,7 +39,9 @@ const Hero = () => {
                 safety are our top priority. Explore and book today!
               </p>
 
-              <Button className="mt-10">Explore Now</Button>
+              <Button className="mt-10" onClick={handleExploreClick}>
+                Explore Now
+              </Button>
             </div>
           </div>
         </div>
