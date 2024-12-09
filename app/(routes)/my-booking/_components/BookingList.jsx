@@ -6,7 +6,8 @@ import moment from "moment";
 import { Calendar, MapPin, Timer } from "lucide-react";
 import { toast } from "sonner";
 
-const BookingList = ({ bookingList, expired, onDelete }) => { // Receive onDelete as a prop
+const BookingList = ({ bookingList, expired, onDelete }) => {
+  // Receive onDelete as a prop
   const { categories } = useDoctorContext();
 
   // Helper function to find doctor details based on the name
@@ -44,14 +45,16 @@ const BookingList = ({ bookingList, expired, onDelete }) => { // Receive onDelet
               <div className="flex flex-col gap-2 w-full">
                 <div className="md:flex md:justify-between items-center">
                   <h2 className="font-bold text-[18px]">{booking?.doctor}</h2>
-                  {!expired && (
-                    <CancelAppointment
-                      onCancelAppointment={() => {
-                        onDelete(booking?.id); // Call the onDelete prop
-                        toast("Booking cancelled successfully!");
-                      }}
-                    />
-                  )}
+                  <div className="md:inline-block hidden">
+                    {!expired && (
+                      <CancelAppointment
+                        onCancelAppointment={() => {
+                          onDelete(booking?.id); // Call the onDelete prop
+                          toast("Booking cancelled successfully!");
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
                 <h2 className="text-sm flex gap-1 items-center">
                   <MapPin className="text-primary w-4 h-4" />
@@ -75,6 +78,16 @@ const BookingList = ({ bookingList, expired, onDelete }) => { // Receive onDelet
                     {booking?.Time}
                   </span>
                 </h2>
+                <div className="md:hidden mt-2">
+                  {!expired && (
+                    <CancelAppointment
+                      onCancelAppointment={() => {
+                        onDelete(booking?.id); // Call the onDelete prop
+                        toast("Booking cancelled successfully!");
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           );
