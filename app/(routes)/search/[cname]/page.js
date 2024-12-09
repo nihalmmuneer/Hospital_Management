@@ -9,7 +9,6 @@ const Search = ({ params }) => {
   
   // Unwrap params using React.use()
   const { cname } = React.use(params); // Access params using React.use()
-  console.log(decodeURIComponent(cname), "cname")
 
   useEffect(() => {
     filteredDoctorsByCategory();

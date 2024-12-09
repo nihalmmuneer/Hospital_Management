@@ -13,7 +13,6 @@ import {
 
 const Header = () => {
   const { user } = useKindeBrowserClient();
-  console.log(user, "userInfo");
 
   useEffect(() => {}, [user]);
   const Menu = [
